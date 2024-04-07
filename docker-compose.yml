@@ -1,0 +1,15 @@
+services:
+  mipuebloapp:
+    container_name: mipuebloappcontainer
+    build: .
+    image: mipuebloapp:v1
+    ports:
+      - 80:80
+    expose:
+      - 80
+    networks:
+      - internalnetapp
+
+networks:
+  internalnetapp:
+    driver: bridge

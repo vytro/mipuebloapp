@@ -1,0 +1,140 @@
+<section *ngIf="(loginState$ | async) as state" [ngSwitch]="state.dataState">
+    <div *ngIf="!state.loginSuccess && !state.isUsingMfa" class="container">
+        <div class="row justify-content-center my-5">
+            <div class="col-md-6" style="margin-top: 50px;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h2><i style="margin-right: 5px;" class="bi bi-safe"></i>Mi Pueblo</h2>
+                            <!-- <p class="lead">Questions? Do not hesitate to contact us.</p> -->
+                            <h5 class="card-title mt-4 mb-5">Iniciar Sesion</h5>
+                            <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
+                        </div>
+                        <div *ngIf="state.dataState === DataState.ERROR"
+                            class="alert alert-danger bg-danger text-light border-0 alert-dismissable fade show"
+                            role="alert" style="display: flex; justify-content: space-between; align-items: center;">
+
+                            <!-- error message -->
+                            {{ state.error }}
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                aria-label="Close" style="margin-left: auto; order: 2;"></button>
+                        </div>
+                        <!-- form -->
+                        <form action="" #loginForm="ngForm" (ngSubmit)="login(loginForm)">
+                            <!-- input email -->
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="email">Correo Electronico</label>
+                                <input [disabled]="state.dataState === DataState.LOADING" ngModel type="email"
+                                    name="email" class="form-control" required>
+                            </div>
+                            <!-- input password -->
+                            <div class="form-outline mb-4">
+                                <label class="form-label" for="password">Contrasena</label>
+                                <input [disabled]="state.dataState === DataState.LOADING" ngModel type="password"
+                                    name="password" class="form-control" required>
+                            </div>
+                            <!-- submit button -->
+                            <div class="d-flex justify-content-center mb-4">
+                                <button
+                                    [disabled]="state.dataState === DataState.LOADING || loginForm.invalid || loginForm.pristine"
+                                    type="submit" class="btn btn-primary">
+                                    <span *ngIf="state.dataState === DataState.LOADING"
+                                        class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                        style="margin-right: 5px;"></span>
+                                    <span *ngIf="state.dataState === DataState.LOADING">Cargando...</span>
+                                    <span *ngIf="!(state.dataState === DataState.LOADING)">Iniciar sesión</span>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="row mb-4">
+                            <div class="col d-flex justify-content-center">
+                                <a [ngStyle]="{'pointer-events': state.dataState === DataState.LOADING ? 'none' : ''}"
+                                    routerLink="/register">Crear una Cuenta</a>
+                            </div>
+                            <div class="col">
+                                <a [ngStyle]="{'pointer-events': state.dataState === DataState.LOADING ? 'none' : ''}"
+                                    routerLink="/resetpassword">Olvidaste tu contraseña?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div *ngIf="state.isUsingMfa" class="container">
+        <!-- <div class="contianer"></div> -->
+        <div class="row justify-content-center my-5">
+            <div class="col-md-6" style="margin-top: 50px;">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="text-center">
+                            <h2><i style="margin-right: 5px;" class="bi bi-safe"></i>MiPueblo</h2>
+                            <h5 class="card-title mt-4 mb-4">Verification Code Sent To ...{{state.phone}}</h5>
+                            <i class="bi bi-check-circle-fill" style="font-size: 30px;color: green;"></i>
+                            <p class="mt-2" style="font-size: 20px;">Please access your SMS and enter the code.</p>
+                        </div>
+                        <div *ngIf="state.dataState === DataState.ERROR"
+                            class="alert alert-danger bg-danger text-light border-0 alert-dismissable fade show"
+                            role="alert" style="display: flex; justify-content: space-between; align-items: center;">
+
+                            <!-- error message -->
+                            {{state.error}}
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                                aria-label="Close" style="margin-left: auto; order: 2;"></button>
+                        </div>
+                        <form action="" #verifyCodeForm="ngForm" (ngSubmit)="verifyCode(verifyCodeForm)">
+                            <div class="form-outline mb-4">
+                                <label for="code" class="form-label">Verification Code</label>
+                                <input [disabled]="state.dataState === DataState.LOADING" ngModel type="text"
+                                    name="code" class="form-control" required>
+                            </div>
+                            <div class="d-flex justify-content-center mb-4">
+                                <button
+                                    [disabled]="state.dataState === DataState.LOADING || verifyCodeForm.invalid || verifyCodeForm.pristine"
+                                    type="submit" class="btn btn-primary">
+                                    <span *ngIf="state.dataState === DataState.LOADING"
+                                        class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                        style="margin-right: 5px;"></span>
+                                    <span *ngIf="state.dataState === DataState.LOADING">Loading...</span>
+                                    <span *ngIf="!(state.dataState === DataState.LOADING)">Verify Code</span>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="row mb-4">
+                            <div class="col d-flex justify-content-center">
+                                <!-- (click)="loginPage()" to reset all the states and boolean values -->
+                                <a (click)="loginPage()"
+                                    style="color: darkcyan; text-decoration: underline; cursor: pointer;">Account
+                                    Login</a>
+                            </div>
+                            <div class="col">
+                                <a [routerLink]="['/register']"
+                                    style="color: darkcyan; text-decoration: underline; cursor: pointer;">Create
+                                    an Account</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <p>login works!</p> -->

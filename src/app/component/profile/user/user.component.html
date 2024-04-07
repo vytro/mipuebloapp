@@ -1,0 +1,503 @@
+<!-- ngIf is subscribing to the ts file -->
+<ng-container *ngIf="(profileState$ | async) as state">
+    <ng-container>
+        <app-navbar [user]="state?.appData?.data?.user"></app-navbar>
+        <!-- to display the json in plaintext -->
+        <!-- <div>{{ state | json }} </div> -->
+        <section>
+            <div class="container">
+                <nav aria-label="breadcrumb" style="margin-top: 8px;">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a [routerLink]="['/']">Home</a>
+                        </li>
+                        <li class="breadcrumb-item active"> Users </li>
+                        <li class="breadcrumb-item active" aria-current="page">{{state?.appData?.data?.user?.firstName}}
+                            {{state?.appData?.data?.user?.lastName}}</li>
+                    </ol>
+                </nav>
+                <div class="bg-white shadow rounded-lg d-block d-sm-flex" style="border-radius: 8px;">
+                    <div class="profile-tab-nav border-right">
+                        <div class="p-4">
+                            <div class="img-circle text-center mb-3">
+                                <span style="position: relative">
+                                    <img [src]="state?.appData?.data?.user?.imageUrl" alt="profImg" class="shadow" />
+                                    <!-- <img src="https://img.freepik.com/free-icon/user_318-159711.jpg" alt="userimg"
+                                    class="shadow" /> -->
+                                    <i (click)="fileInput.click()" class="bi bi-camera-fill right-position"></i>
+                                </span>
+                            </div>
+                            <h4 class="text-center">{{state?.appData?.data?.user?.firstName}}
+                                {{state?.appData?.data?.user?.lastName}}</h4>
+                            <!-- <span class="">Since January 1, 2024</span> -->
+                            <span class="">Since {{state?.appData?.data?.user?.createdAt | date:'MMMM d, y'}}</span>
+                        </div>
+                        <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
+                            aria-orientation="vertical">
+                            <a class="nav-link active" id="profile" data-bs-toggle="pill" data-bs-target="#profile-tab"
+                                aria-selected="true" aria-controls="profile" role="tab">
+                                <i class="bi bi-person-circle" style="margin-right: 12px;"></i> Perfil
+                            </a>
+                            <a class="nav-link" id="password" data-bs-toggle="pill" data-bs-target="#password-tab"
+                                aria-selected="true" aria-controls="password" role="tab">
+                                <i class="bi bi-key-fill" style="margin-right: 12px;"></i> Contrasena
+                            </a>
+                            <a class="nav-link" id="security" data-bs-toggle="pill" data-bs-target="#security-tab"
+                                aria-selected="true" aria-controls="security" role="tab">
+                                <i class="bi bi-shield-shaded" style="margin-right: 12px;"></i> Autorizacion
+                            </a>
+                            <a class="nav-link" id="application" data-bs-toggle="pill" data-bs-target="#application-tab"
+                                aria-selected="true" aria-controls="application" role="tab">
+                                <i class="bi bi-gear" style="margin-right: 12px;"></i> Cuenta
+                            </a>
+                            <a class="nav-link" id="notification" data-bs-toggle="pill"
+                                data-bs-target="#notification-tab" aria-selected="true" aria-controls="notification"
+                                role="tab">
+                                <i class="bi bi-lock-fill" style="margin-right: 12px;"></i> Autenticacion
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- tabs -->
+
+                    <div class="tab-content p-4 p-md-5" id="v-pills-tabContent" style="border-left: 1px solid #d4d0d0;">
+
+
+
+                        <!-- Profile tab -->
+
+                        <div class="tab-pane fade show active" id="profile-tab" role="tabpanel"
+                            aria-labelledby="profile" style="min-height: 510px;">
+                            <h3 class="mb-4">Configuracion de Perfil</h3>
+                            <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
+                                <input type="hidden" name="id" [ngModel]="state?.appData?.data?.user?.id">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Nombre(s)</label>
+                                            <input type="text" name="firstName"
+                                                [ngModel]="state?.appData?.data?.user?.firstName"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Apellido(s)</label>
+                                            <input type="text" name="lastName"
+                                                [ngModel]="state?.appData?.data?.user?.lastName"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="email">Correo Electronico</label>
+                                            <input type="text" name="email"
+                                                [ngModel]="state?.appData?.data?.user?.email"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Celular</label>
+                                            <input type="text" name="phone"
+                                                [ngModel]="state?.appData?.data?.user?.phone"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Dirrecion</label>
+                                            <input type="text" name="address"
+                                                [ngModel]="state?.appData?.data?.user?.address"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Titulo de Trabajo</label>
+                                            <input type="text" name="title"
+                                                [ngModel]="state?.appData?.data?.user?.title"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Biografia</label>
+                                            <textarea name="bio" class="form-control"
+                                                [ngModel]="state?.appData?.data?.user?.bio"
+                                                [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                                rows="4"> </textarea>
+                                            <!-- <textarea name="bio" class="form-control"
+                                                [textContent]="state?.appData?.data?.user?.bio"
+                                                [disabled]="state?.appData?.data?.user?.roleName === 'ROLE_USER'"
+                                                rows="4"></textarea> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        [disabled]="(state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async)) ?? false"
+                                        type="submit" class="btn btn-primary">
+                                        <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm"
+                                            role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+                                        <span *ngIf="isLoading$ | async">Cargaando...</span>
+                                        <span *ngIf="!(isLoading$ | async)">Actualizar</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <!-- Password tab -->
+
+                        <div class="tab-pane fade" id="password-tab" role="tabpanel" aria-labelledby="password"
+                            style="min-height: 510px;">
+                            <h3 class="mb-4">Configuracion de Contrasena</h3>
+                            <form #passwordForm="ngForm" (ngSubmit)="updatePassword(passwordForm)">
+                                <!-- <input type="hidden" name="userId"> -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Contrasena Actual</label>
+                                            <input type="password" name="currentPassword" ngModel
+                                                [disabled]="(isLoading$ | async) ?? false" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Nueva Contrasena</label>
+                                            <input type="password" name="newPassword" ngModel
+                                                [disabled]="(isLoading$ | async) ?? false" class="form-control"
+                                                minlength="5" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Confirmar nueva Contrasena</label>
+                                            <input type="password" name="confirmNewPassword" ngModel
+                                                [disabled]="(isLoading$ | async) ?? false" class="form-control"
+                                                minlength="5" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <!-- <button type="submit" class="btn btn-primary">
+                                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                                            style="margin-right: 5px;"></span>
+                                        <span>Loading...</span>
+                                        <span>Update</span>
+                                    </button> -->
+                                    <button [disabled]="passwordForm.invalid || (isLoading$ | async) ?? false"
+                                        type="submit" class="btn btn-primary">
+                                        <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm"
+                                            role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+                                        <span *ngIf="isLoading$ | async">Cargando...</span>
+                                        <span *ngIf="!(isLoading$ | async)">Actualizar</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <!-- Authorization tab -->
+
+                        <div class="tab-pane fade" id="security-tab" role="tabpanel" aria-labelledby="security"
+                            style="min-height: 510px;">
+                            <h3 class="mb-4">Configuracion de Autorizacion</h3>
+                            <form #roleForm="ngForm" (ngSubmit)="updateRole(roleForm)">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label style="margin-bottom: 5px;">Nombre del Rol</label>
+                                            <select name="roleName" [ngModel]="state?.appData?.data?.user?.roleName"
+                                                [disabled]="(!(state?.appData?.data?.user?.roleName === 'ROLE_SYSADMIN' || state?.appData?.data?.user?.roleName === 'ROLE_ADMIN') || (isLoading$ | async)) ?? false"
+                                                class="form-control select-cl" required>
+                                                <option *ngFor="let role of state?.appData?.data?.roles"
+                                                    [selected]="state?.appData?.data?.user?.roleName === role.name"
+                                                    [disabled]="(!(state?.appData?.data?.user?.roleName === 'ROLE_SYSADMIN' || state?.appData?.data?.user?.roleName === 'ROLE_ADMIN') || (isLoading$ | async)) ?? false"
+                                                    [ngValue]="role.name" class="select-cl">{{role.name}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label style="margin-bottom: 5px;">Permisos de Rol</label>
+                                            <input type="text"
+                                                *ngFor="let permission of state?.appData?.data?.user?.permissions?.split(',')"
+                                                [value]="permission" [disabled]="true" class="form-control"
+                                                style="margin-bottom: 5px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        [disabled]="!(state?.appData?.data?.user?.roleName === 'ROLE_SYSADMIN' || state?.appData?.data?.user?.roleName === 'ROLE_ADMIN') || (isLoading$ | async) ?? false"
+                                        type="submit" class="btn btn-primary">
+                                        <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm"
+                                            role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+                                        <span *ngIf="isLoading$ | async">Cargando...</span>
+                                        <span *ngIf="!(isLoading$ | async)">Actualizar</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <!-- Account tab -->
+
+                        <div class="tab-pane fade" id="application-tab" role="tabpanel" aria-labelledby="application"
+                            style="min-height: 510px;">
+                            <h3 class="mb-4">Configuraciones de la Cuenta</h3>
+                            <form #settingsForm="ngForm" (ngSubmit)="updateAccountSettings(settingsForm)">
+                                <input type="hidden" name="userId">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="form-check">
+                                                <input
+                                                    [disabled]="!(state?.appData?.data?.user?.roleName === 'ROLE_SYSADMIN' || state?.appData?.data?.user?.roleName === 'ROLE_ADMIN') || (isLoading$ | async) ?? false"
+                                                    [checked]="state?.appData?.data?.user?.enabled"
+                                                    [ngModel]="state?.appData?.data?.user?.enabled" type="checkbox"
+                                                    name="enabled" class="form-check-input">
+                                                <label class="form-check-label" for="enabled">
+                                                    Cuenta Activa
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input
+                                                    [disabled]="!(state?.appData?.data?.user?.roleName === 'ROLE_SYSADMIN' || state?.appData?.data?.user?.roleName === 'ROLE_ADMIN') || (isLoading$ | async) ?? false"
+                                                    [checked]="state?.appData?.data?.user?.notLocked"
+                                                    [ngModel]="state?.appData?.data?.user?.notLocked" type="checkbox"
+                                                    name="notLocked" class="form-check-input">
+                                                <label class="form-check-label" for="notLocked">
+                                                    Cuenta Desbloqueada
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        [disabled]="!(state?.appData?.data?.user?.roleName === 'ROLE_SYSADMIN' || state?.appData?.data?.user?.roleName === 'ROLE_ADMIN') || (isLoading$ | async) ?? false"
+                                        type="submit" class="btn btn-primary">
+                                        <span *ngIf="isLoading$ | async" class="spinner-border spinner-border-sm"
+                                            role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+                                        <span *ngIf="isLoading$ | async">Cargando...</span>
+                                        <span *ngIf="!(isLoading$ | async)">Actualizar</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+
+
+                        <!-- Authentication tab -->
+
+                        <div class="tab-pane fade" id="notification-tab" role="tabpanel" aria-labelledby="notification"
+                            style="min-height: 510px;">
+                            <h3 class="mb-4">Configuracion de Autenticacion</h3>
+                            <p>Estas configuraciones ayudan a mantener su cuenta más segura.</p>
+                            <div class="list-group mb-5 shadow">
+                                <div class="list-group-item">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <strong class="mb-2">Autenticación Multifactor</strong>
+                                            <span *ngIf="state?.appData?.data?.user?.usingMfa"
+                                                class="badge bg-success mx-3">Activada</span>
+                                            <span *ngIf="!state?.appData?.data?.user?.usingMfa"
+                                                class="badge bg-warning mx-3">Desactivada</span>
+                                            <p class="text-muted mb-0">Configure la autenticación multifactor para
+                                                ayudar a mantener su cuenta más segura</p>
+                                        </div>
+                                        <div class="col-auto">
+                                            <button (click)="toggleMfa()"
+                                                [disabled]="state?.appData?.data?.user?.roleName === 'ROLE_USER' || (isLoading$ | async) ?? false"
+                                                class="btn btn-primary btn-sm">
+                                                {{state?.appData?.data?.user?.usingMfa ? 'Desactivar' : 'Activar'}}
+                                                <span *ngIf="(isLoading$ | async) ?? false"
+                                                    class="spinner-border spinner-border-sm" role="status"
+                                                    aria-hidden="true" style="margin-right: 5px;"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group-item">
+                                    <div class="row align-items-center">
+                                        <div class="col">
+                                            <strong class="mb-2">Registros de Actividad</strong>
+                                            <p class="text-muted mb-0">Mostrar la últimas actividades en su cuenta</p>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" (change)="toggleLogs()"
+                                                    [disabled]="(isLoading$ | async) ?? false"
+                                                    [checked]="(showLogs$ | async)" class="custom-control-input"
+                                                    class="custom-control-input" id="activityLog">
+                                                <span class="custom-control-label"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <!-- Account activities -->
+
+                <!-- v1 -->
+                <!-- <div class="row">
+                    <div class="col-xl-12 mt-4">
+                        <div class="card" style="border-radius: 8px;">
+                            <div class="card-body">
+                                <h5 class="card-title">Account Activities</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Latest activities on your account. </h6>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Device</th>
+                                            <th scope="col">IP Address</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Type</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Chrome</td>
+                                            <td>192.168.1.209</td>
+                                            <td>01-15-2023 5:25:20</td>
+                                            <td>
+                                                <span class="badge pill bg-success">
+                                                    LOGIN_ATTEMPT_SUCCESS
+                                                </span>
+                                            </td>
+                                            <td>You logged in successfully</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm"
+                                                    style="background-color: #fd5d0d; font-weight: 450;">Report</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+                <!-- v2 -->
+                <!-- <div class="row">
+                    <div class="col-xl-12 mt-4">
+                        <div class="card" style="border-radius: 8px;">
+                            <div class="card-body">
+                                <h5 class="card-title">Account Activities</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Latest activities on your account. </h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Device</th>
+                                                <th scope="col">IP Address</th>
+                                                <th scope="col">Date</th>
+                                                <th scope="col">Type</th>
+                                                <th scope="col">Description</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Chrome</td>
+                                                <td>192.168.1.209</td>
+                                                <td>01-15-2023 5:25:20</td>
+                                                <td>
+                                                    <span class="badge pill bg-success">
+                                                        LOGIN_ATTEMPT_SUCCESS
+                                                    </span>
+                                                </td>
+                                                <td>You logged in successfully</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm"
+                                                        style="background-color: #fd5d0d; font-weight: 450;">Report</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> -->
+
+
+                <div *ngIf="(showLogs$ | async)" class="row">
+                    <div class="col-xl-12 mt-4">
+                        <div class="card" style="border-radius: 8px;">
+                            <div class="card-body">
+                                <h5 class="card-title">Actividades de Su Cuenta</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Últimas actividades en su cuenta. </h6>
+                                <div class="table-responsive">
+                                    <table class="table table-hover responsive-table">
+                                        <tr *ngFor="let event of state?.appData?.data?.events">
+                                            <td data-label="Device">{{event.device}}</td>
+                                            <td data-label="IP Address">{{event.ipAddress}}</td>
+                                            <td data-label="Date">{{event.createdAt | date: 'MMMM d, y, h:mm a'}}</td>
+                                            <td data-label="Type">
+                                                <span class="badge pill" [ngClass]="[
+                                                    event.type === EventType.LOGIN_ATTEMPT ? 'bg-warning' : '',
+                                                    event.type === EventType.LOGIN_ATTEMPT_SUCCESS ? 'bg-success' : '',
+                                                    event.type === EventType.PROFILE_UPDATE ? 'bg-primary' : '',
+                                                    event.type === EventType.LOGIN_ATTEMPT_FAILURE ? 'bg-danger' : '',
+                                                    event.type === EventType.PROFILE_PICTURE_UPDATE ? 'bg-green' : '',
+                                                    event.type === EventType.ROLE_UPDATE ? 'bg-secondary' : '',
+                                                    event.type === EventType.ACCOUNT_SETTINGS_UPDATE ? 'bg-violet' : '',
+                                                    event.type === EventType.PASSWORD_UPDATE ? 'bg-dark' : '',
+                                                    event.type === EventType.MFA_UPDATE ? 'bg-info' : ''
+                                                    ]" style="color: white;">
+                                                    {{event.type}}
+                                                </span>
+                                            </td>
+                                            <td data-label="Description">{{event.description}}</td>
+                                            <td data-label="Action">
+                                                <button type="button" class="btn btn-sm"
+                                                    style="background-color: #fd5d0d; font-weight: 450;">Reportar</button>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </section>
+    </ng-container>
+</ng-container>
+
+<!-- profile image change form -->
+<form enctype="multipart/form-data" style="display:none;">
+    <!-- <input type="file" #fileInput (change)="updateImage($event.target?.files[0])" name="image" id="image"
+        accept="image/*" /> -->
+    <!-- <input type="file" #fileInput (change)="updateImage(($event.target as HTMLInputElement)?.files[0])" name="image"
+        id="image" accept="image/*" /> -->
+    <input type="file" #fileInput (change)="updateImage($event)" name="image" id="image" accept="image/*" />
+</form>

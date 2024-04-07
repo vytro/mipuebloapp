@@ -1,0 +1,47 @@
+/* to limit sizing of the user avatar icon, so it isn't too big */
+.user-avatar {
+    height: 32px;
+    width: 32px;
+}
+
+.navbar {
+    background: linear-gradient(135deg, #0252dd, #0165cf);
+    /* padding: 0.8rem 1rem; */
+    padding: 0.1rem 0.1rem;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+.navbar-nav .nav-link {
+    color: #fff;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #f8f9fa;
+}
+
+.dropdown-menu {
+    background-color: #fff;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    color: #333;
+    transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item i {
+    margin-right: 8px;
+}
